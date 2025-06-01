@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutmeg Syndicate FC - Players</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #0d1117;
+      color: #ffffff;
+      transition: background-color 0.4s, color 0.4s;
+      font-size: 16px;
+    }
+
+    #main-content {
+      display: none;
+    }
+
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0d1117;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .spinner {
+      font-size: 4rem;
+      animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .light-mode {
+      background: #f0f6fc;
+      color: #333;
+    }
+    .light-mode #loading-screen { background: #f0f6fc; }
+    .light-mode nav, .light-mode footer { background: #333; }
+    .light-mode .player-card, .light-mode .modal-content { background: #fff; border-color: #d0d7de; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: #161b22;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
+
+    nav img {
+      height: 50px;
+      object-fit: contain;
+    }
+
+    #hamburger {
+      display: none;
+      font-size: 1.8rem;
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      z-index: 1001;
+      padding: 0.5rem;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #nav-menu.active {
+      display: flex;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 600;
+      transition: color 0.3s;
+      padding: 0.75rem;
+      display: block;
+      font-size: 1rem;
+    }
+
+    nav ul li a:hover, nav ul li a:focus {
+      color: #007bff;
+      outline: none;
+    }
+
+    .highlight-btn {
+      background-color: #28a745;
+      border-radius: 6px;
+      padding: 0.85rem 1.25rem;
+      transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
+      animation: glowPulse 2s ease-in-out infinite;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      display: inline-block;
+      touch-action: manipulation;
+    }
+
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.7), 0 0 20px rgba(40, 167, 69, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(40, 167, 69, 1), 0 0 25px rgba(40, 167, 69, 0.7); }
+      100% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.7), 0 0 20px rgba(40, 167, 69, 0.5); }
+    }
+
+    .highlight-btn:hover, .highlight-btn:focus, .highlight-btn:active {
+      background-color: #32cd52;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(40, 167, 69, 1), 0 0 30px rgba(40, 167, 69, 0.8);
+      outline: none;
+      color: #fff;
+    }
+
+    #theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+      transition: color 0.4s;
+      padding: 0.5rem;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    #theme-toggle:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    section {
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.75rem;
+      color: #007bff;
+    }
+
+    .players {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .player-card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      padding: 0.75rem;
+      border-radius: 8px;
+      transition: transform 0.3s;
+      position: relative;
+      cursor: pointer;
+      min-height: 200px;
+    }
+
+    .player-card:hover, .player-card:focus {
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    .player-card img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .player-card.captain {
+      border: 2px solid gold;
+      box-shadow: 0 0 8px gold;
+    }
+
+    .player-card.vice-captain {
+      border: 2px solid silver;
+      box-shadow: 0 0 8px silver;
+    }
+
+    .player-card.advisor {
+      border: 2px solid #cd7f32;
+      box-shadow: 0 0 8px #cd7f32;
+    }
+
+    .player-card.captain::after,
+    .player-card.vice-captain::after,
+    .player-card.advisor::after {
+      content: attr(data-role);
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.75rem;
+      color: black;
+      user-select: none;
+    }
+
+    .player-card.captain::after { background: gold; content: "Captain"; }
+    .player-card.vice-captain::after { background: silver; content: "Vice Captain"; }
+    .player-card.advisor::after { background: #cd7f32; content: "Advisor"; }
+
+    #playerModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #161b22;
+      max-width: 90%;
+      margin: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      text-align: center;
+    }
+
+    .modal-content img {
+      width: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #238636;
+      border: none;
+      border-radius: 5px;
+      color: #ffffff;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      transition: background-color 0.3s;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    button:hover, button:focus {
+      background-color: #2ea043;
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    footer {
+      background-color: #161b22;
+      color: #8ea1d9;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    nav ul li.facebook-links {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    nav ul li.facebook-links a {
+      font-size: 1.2rem;
+      color: #ffffff;
+      transition: color 0.3s;
+    }
+
+    nav ul li.facebook-links a:hover, nav ul li.facebook-links a:focus {
+      color: #4267B2;
+      outline: none;
+    }
+
+    .players-table {
+      width: 100%;
+      max-width: 800px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .players-table th, .players-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .players-table th {
+      background-color: #238636;
+      font-weight: 600;
+    }
+
+    .players-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .light-mode .players-table {
+      background: #fff;
+      border-color: #d0d7de;
+    }
+
+    .light-mode .players-table th {
+      background-color: #2ea043;
+    }
+
+    .light-mode .players-table td {
+      border-bottom: 1px solid #d0d7de;
+    }
+    .hometn{
+        margin-top: 10%;
+    }
+
+    @media (max-width: 768px) {
+      body { font-size: 14px; }
+      #hamburger { display: block; }
+      #nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: #161b22;
+        padding: 0.5rem;
+        z-index: 999;
+      }
+      nav ul li { padding: 0.5rem 0; width: 100%; text-align: center; }
+      .highlight-btn {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+        animation: glowPulseMobile 2.5s ease-in-out infinite;
+        width: 90%;
+        max-width: 300px;
+      }
+      @keyframes glowPulseMobile {
+        0% { box-shadow: 0 0 8px rgba(40, 167, 69, 0.6), 0 0 15px rgba(40, 167, 69, 0.4); }
+        50% { box-shadow: 0 0 12px rgba(40, 167, 69, 0.8), 0 0 20px rgba(40, 167, 69, 0.6); }
+        100% { box-shadow: 0 0 8px rgba(40, 167, 69, 0.6), 0 0 15px rgba(40, 167, 69, 0.4); }
+      }
+      .highlight-btn:hover, .highlight-btn:focus, .highlight-btn:active {
+        transform: scale(1.03);
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.9), 0 0 25px rgba(40, 167, 69, 0.7);
+      }
+      .players { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+      .player-card { min-height: 150px; }
+      .player-card img { max-height: 150px; }
+      .player-card h3 { font-size: 0.95rem; }
+      .modal-content { margin: 0.5rem; padding: 0.75rem; }
+      .modal-content img { max-height: 50vh; }
+      .spinner { font-size: 3rem; }
+      .players-table { font-size: 14px; }
+      .players-table th, .players-table td { padding: 0.75rem; }
+    }
+
+    @media (max-width: 480px) {
+      body { font-size: 12px; }
+      nav { padding: 0.75rem; }
+      nav img { height: 40px; }
+      #hamburger { font-size: 1.5rem; }
+      #nav-menu { top: 60px; }
+      h2 { font-size: 1.5rem; }
+      .players { grid-template-columns: 1fr; }
+      .player-card { min-height: 120px; }
+      .player-card img { max-height: 120px; }
+      .highlight-btn {
+        padding: 0.9rem 1.2rem;
+        font-size: 1rem;
+        box-shadow: 0 0 6px rgba(40, 167, 69, 0.5);
+        animation: glowPulseMobile 3s ease-in-out infinite;
+        width: 85%;
+      }
+      .modal-content img { max-height: 40vh; }
+      .spinner { font-size: 2.5rem; }
+      .players-table { font-size: 12px; }
+      .players-table th, .players-table td { padding: 0.5rem; }
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+  <div id="loading-screen">
+    <div class="spinner">⚽</div>
+  </div>
+  <div id="main-content">
+    <button id="hamburger" aria-label="Toggle menu" aria-controls="nav-menu">☰</button>
+    <nav>
+      <img src="logo1.jpeg" alt="Nutmeg Syndicate FC Logo" loading="lazy">
+      <ul id="nav-menu">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="players.html" class="highlight-btn">Team</a></li>
+        <li><a href="index.html#schedule">Matches</a></li>
+        <li><a href="index.html#stats">Stats</a></li>
+        <li><a href="index.html#highlights">Highlights</a></li>
+        <li><a href="index.html#blog">News</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li class="facebook-links">
+          <a href="https://www.facebook.com/nutmegsyndicatefc" target="_blank" aria-label="Facebook Page"><i class="fab fa-facebook-square"></i></a>
+          <a href="https://www.facebook.com/groups/nutmegsyndicatefc" target="_blank" aria-label="Facebook Group"><i class="fab fa-facebook-f"></i></a>
+        </li>
+        <li><button id="theme-toggle" aria-label="Toggle theme">🌙</button></li>
+      </ul>
+    </nav>
+
+    <section id="team">
+      <h2>Meet the Players</h2>
+      <div class="players">
+        <div class="player-card captain" data-role="Captain" data-stats="Goals: 5, Assists: 3, Matches: 10">
+          <img src="captain.jpg" alt="Saleh Ahmed Kha" loading="lazy">
+          <h3>Saleh Ahmed Kha</h3>
+        </div>
+        <div class="player-card vice-captain" data-role="Vice-Captain" data-stats="Goals: 2, Assists: 4, Matches: 8">
+          <img src="vicecaptain.jpg" alt="Samin Intisar" loading="lazy">
+          <h3>Samin Intisar</h3>
+        </div>
+        <div class="player-card advisor" data-role="Advisor" data-stats="Goals: 0, Assists: 1, Matches: 5">
+          <img src="advisor1.jpg" alt="Muhammad Rakib Uddin" loading="lazy">
+          <h3>Muhammad Rakib Uddin</h3>
+        </div>
+        <div class="player-card advisor" data-role="Advisor" data-stats="Goals: 1, Assists: 2, Matches: 6">
+          <img src="advisor2.jpg" alt="Imran Hosen" loading="lazy">
+          <h3>Imran Hosen</h3>
+        </div>
+        <div class="player-card advisor" data-role="Advisor" data-stats="Goals: 0, Assists: 0, Matches: 4">
+          <img src="advisor3.jpg" alt="Mehedi Foysal" loading="lazy">
+          <h3>Mehedi Foysal</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 3, Assists: 1, Matches: 7">
+          <img src="player1.jpg" alt="Junayed Sunvee" loading="lazy">
+          <h3>Junayed Sunvee</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 4, Assists: 0, Matches: 9">
+          <img src="player2.jpg" alt="Orko Sanjan" loading="lazy">
+          <h3>Orko Sanjan</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 2, Assists: 2, Matches: 8">
+          <img src="player3.jpg" alt="Alamin Hossain Anik" loading="lazy">
+          <h3>Alamin Hossain Anik</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 1, Assists: 3, Matches: 6">
+          <img src="player4.jpg" alt="Salman Farsi" loading="lazy">
+          <h3>Salman Farsi</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 1, Matches: 5">
+          <img src="player5.jpg" alt="Mehedi Hasan Jeechan" loading="lazy">
+          <h3>Mehedi Hasan Jeechan</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 2, Assists: 0, Matches: 7">
+          <img src="player6.jpg" alt="Hridoy Hasan" loading="lazy">
+          <h3>Hridoy Hasan</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 1, Assists: 1, Matches: 6">
+          <img src="player7.jpg" alt="Musa Shakil" loading="lazy">
+          <h3>Musa Shakil</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 3, Assists: 2, Matches: 8">
+          <img src="player8.jpg" alt="Jarif Mehtab" loading="lazy">
+          <h3>Jarif Mehtab</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 0, Matches: 4">
+          <img src="player9.jpg" alt="Akanto Datta" loading="lazy">
+          <h3>Akanto Datta</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 2, Assists: 1, Matches: 7">
+          <img src="player10.jpg" alt="Abyaz Mansur" loading="lazy">
+          <h3>Abyaz Mansur</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 1, Assists: 0, Matches: 5">
+          <img src="player11.jpg" alt="Shahid" loading="lazy">
+          <h3>Shahid</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 2, Matches: 6">
+          <img src="player12.jpg" alt="Shakawat Alam Efty" loading="lazy">
+          <h3>Shakawat Alam Efty</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 2, Assists: 1, Matches: 7">
+          <img src="player13.jpg" alt="Hridoy Ahamed" loading="lazy">
+          <h3>Hridoy Ahamed</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 0, Matches: 4">
+          <img src="player14.jpg" alt="Ahad Sarker" loading="lazy">
+          <h3>Ahad Sarker</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 0, Matches: 3">
+          <img src="player15.jpg" alt="Ayan Rahim" loading="lazy">
+          <h3>Ayan Rahim</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 1, Assists: 1, Matches: 5">
+          <img src="player16.jpg" alt="Minhaz Sarker" loading="lazy">
+          <h3>Minhaz Sarker</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 0, Matches: 3">
+          <img src="player17.jpg" alt="Tanim Finnegan" loading="lazy">
+          <h3>Tanim Finnegan</h3>
+        </div>
+        <div class="player-card" data-stats="Goals: 0, Assists: 0, Matches: 2">
+          <img src="player18.jpg" alt="Sarwar Alam" loading="lazy">
+          <h3>Sarwar Alam</h3>
+        </div>
+      </div>
+
+      
+      
+      <div class="hometn">
+      <a href="index.html">
+        <button>GO TO HOME PAGE</button>
+    </a>
+</div>
+     
+      <table class="players-table">
+        <thead>
+          <tr>
+            <th>Player Name</th>
+            <th>Player ID</th>
+            <th>Device</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Saleh Ahmed Kha</td><td>P001</td><td>Not Available</td></tr>
+          <tr><td>Samin Intisar</td><td>P002</td><td>Not Available</td></tr>
+          <tr><td>Muhammad Rakib Uddin</td><td>P003</td><td>Not Available</td></tr>
+          <tr><td>Imran Hosen</td><td>P004</td><td>Not Available</td></tr>
+          <tr><td>Mehedi Foysal</td><td>P005</td><td>Not Available</td></tr>
+          <tr><td>Junayed Sunvee</td><td>P006</td><td>Not Available</td></tr>
+          <tr><td>Orko Sanjan</td><td>P007</td><td>Not Available</td></tr>
+          <tr><td>Alamin Hossain Anik</td><td>P008</td><td>Not Available</td></tr>
+          <tr><td>Salman Farsi</td><td>P009</td><td>Not Available</td></tr>
+          <tr><td>Mehedi Hasan Jeechan</td><td>P010</td><td>Not Available</td></tr>
+          <tr><td>Hridoy Hasan</td><td>P011</td><td>Not Available</td></tr>
+          <tr><td>Musa Shakil</td><td>P012</td><td>Not Available</td></tr>
+          <tr><td>Jarif Mehtab</td><td>P013</td><td>Not Available</td></tr>
+          <tr><td>Akanto Datta</td><td>P014</td><td>Not Available</td></tr>
+          <tr><td>Abyaz Mansur</td><td>P015</td><td>Not Available</td></tr>
+          <tr><td>Shahid</td><td>P016</td><td>Not Available</td></tr>
+          <tr><td>Shakawat Alam Efty</td><td>P017</td><td>Not Available</td></tr>
+          <tr><td>Hridoy Ahamed</td><td>P018</td><td>Not Available</td></tr>
+          <tr><td>Ahad Sarker</td><td>P019</td><td>Not Available</td></tr>
+          <tr><td>Ayan Rahim</td><td>P020</td><td>Not Available</td></tr>
+          <tr><td>Minhaz Sarker</td><td>P021</td><td>Not Available</td></tr>
+          <tr><td>Tanim Finnegan</td><td>P022</td><td>Not Available</td></tr>
+          <tr><td>Sarwar Alam</td><td>P023</td><td>Not Available</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div id="playerModal" role="dialog" aria-labelledby="player-name" aria-modal="true">
+      <div class="modal-content">
+        <img id="player-image" src="" alt="Player Image" loading="lazy">
+        <h3 id="player-name"></h3>
+        <p id="player-stats"></p>
+        <button onclick="closeModal()" aria-label="Close modal">Close</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2025 Nutmeg Syndicate FC. All rights reserved.</p>
+    </footer>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+      }, 1000);
+    });
+
+    const toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      toggle.textContent = document.body.classList.contains('light-mode') ? '🌞' : '🌙';
+      localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+    });
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+      toggle.textContent = '🌞';
+    }
+
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    hamburger.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active'));
+    });
+
+    // Collapse mobile menu after clicking a link
+    document.querySelectorAll('#nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          navMenu.classList.remove('active');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+      link.addEventListener('touchstart', (e) => {
+        if (window.innerWidth <= 768) {
+          navMenu.classList.remove('active');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      }, { passive: false });
+    });
+
+    document.querySelectorAll('.player-card').forEach(card => {
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('click', handleOpenModal);
+      card.addEventListener('touchstart', handleOpenModal, { passive: false });
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          handleOpenModal(event);
+        }
+      });
+
+      function handleOpenModal(event) {
+        event.preventDefault();
+        try {
+          const nameElement = card.querySelector('h3');
+          const name = nameElement ? nameElement.textContent.trim() : 'Unknown Player';
+          const stats = card.dataset.stats || 'No stats available';
+          const imageElement = card.querySelector('img');
+          const imageSrc = imageElement ? imageElement.src : '';
+
+          document.getElementById('player-name').textContent = name;
+          document.getElementById('player-stats').textContent = stats;
+          const playerImage = document.getElementById('player-image');
+          playerImage.src = imageSrc;
+          playerImage.alt = `Image of ${name}`;
+
+          const modal = document.getElementById('playerModal');
+          modal.style.display = 'flex';
+          modal.focus();
+          const closeButton = modal.querySelector('button');
+          if (closeButton) closeButton.focus();
+        } catch (error) {
+          console.error('Error opening modal:', error);
+        }
+      }
+    });
+
+    function closeModal() {
+      const modal = document.getElementById('playerModal');
+      if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && document.getElementById('playerModal').style.display === 'flex') {
+        closeModal();
+      }
+    });
+
+    // Fallback for image load errors
+    document.querySelectorAll('.player-card img').forEach(img => {
+      img.addEventListener('error', () => {
+        img.src = 'https://via.placeholder.com/1920x1080?text=Player+Image';
+        img.alt = 'Placeholder Player Image';
+      });
+    });
+  </script>
+</body>
+</html>

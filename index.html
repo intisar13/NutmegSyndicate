@@ -21,7 +21,7 @@
     }
 
     #main-content {
-      display: none; /* Initially hide main content */
+      display: none;
     }
 
     #loading-screen {
@@ -30,16 +30,16 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #0d1117; /* Match body background */
+      background-color: #0d1117;
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 2000; /* Above all other content */
+      z-index: 2000;
     }
 
     .spinner {
-      font-size: 4rem; /* Size of football emoji */
-      animation: spin 1.5s linear infinite; /* Spinning animation */
+      font-size: 4rem;
+      animation: spin 1.5s linear infinite;
     }
 
     @keyframes spin {
@@ -51,39 +51,20 @@
       background: #f0f6fc;
       color: #333;
     }
-    .light-mode #loading-screen {
-      background: #f0f6fc; /* Match light mode background */
-    }
+    .light-mode #loading-screen { background: #f0f6fc; }
     .light-mode nav, .light-mode footer { background: #333; }
-    .light-mode .player-card, .light-mode #quiz-game, .light-mode .modal-content {
-      background: #fff;
-      border-color: #d0d7de;
-    }
+    .light-mode #quiz-game { background: #fff; border-color: #d0d7de; }
     .light-mode .blog-posts { background: #e6edf3; }
     .light-mode .blog-posts article { background: #fff; }
     .light-mode #stats { background: #e6edf3; }
     .light-mode .stats-counter div { background: #fff; }
     .light-mode #highlights .highlight { background: #e6edf3; }
-    .light-mode .schedule { 
-      background: #e6edf3; /* Lighter background for light mode */
-    }
-    .light-mode .schedule table { 
-      background: #fff; /* White table background */
-    }
-    .light-mode .schedule th {
-      background: #005bb5; /* Darker blue for headers */
-      color: #fff;
-    }
-    .light-mode .schedule td {
-      background: #f0f6fc; /* Light background for cells */
-      color: #333; /* Dark text for readability */
-    }
-    .light-mode .schedule tr:hover td {
-      background: #d0d7de; /* Hover effect */
-    }
-    .light-mode .schedule tr:nth-child(even) td {
-      background: #e6edf3; /* Alternating row color */
-    }
+    .light-mode .schedule { background: #e6edf3; }
+    .light-mode .schedule table { background: #fff; }
+    .light-mode .schedule th { background: #005bb5; color: #fff; }
+    .light-mode .schedule td { background: #f0f6fc; color: #333; }
+    .light-mode .schedule tr:hover td { background: #d0d7de; }
+    .light-mode .schedule tr:nth-child(even) td { background: #e6edf3; }
 
     nav {
       display: flex;
@@ -142,6 +123,32 @@
       outline: none;
     }
 
+    .highlight-btn {
+      background-color: #28a745;
+      border-radius: 6px;
+      padding: 0.85rem 1.25rem;
+      transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
+      animation: glowPulse 2s ease-in-out infinite;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      display: inline-block;
+      touch-action: manipulation;
+    }
+
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.7), 0 0 20px rgba(40, 167, 69, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(40, 167, 69, 1), 0 0 25px rgba(40, 167, 69, 0.7); }
+      100% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.7), 0 0 20px rgba(40, 167, 69, 0.5); }
+    }
+
+    .highlight-btn:hover, .highlight-btn:focus, .highlight-btn:active {
+      background-color: #32cd52;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(40, 167, 69, 1), 0 0 30px rgba(40, 167, 69, 0.8);
+      outline: none;
+      color: #fff;
+    }
+
     #theme-toggle {
       background: none;
       border: none;
@@ -162,12 +169,17 @@
     .hero-slideshow {
       position: relative;
       width: 100%;
-      height: 90vh;
+      min-height: 50vh;
+      max-height: 90vh;
+      aspect-ratio: 16/9;
       overflow: hidden;
+      background-color: #161b22; /* Fallback background */
     }
 
     .slide {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       opacity: 0;
@@ -179,15 +191,25 @@
     }
 
     .slide-image {
-      width: 100%;
-      height: 100%;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
       object-fit: contain;
       object-position: center;
       display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .hero-content {
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 1;
       color: white;
       text-align: center;
@@ -195,9 +217,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      margin-top: 1%;
+      background: rgba(0,0,0,0.3); /* Reduced opacity for better image visibility */
     }
 
     .hero-content h1 {
@@ -222,87 +242,18 @@
       color: #007bff;
     }
 
-    .players {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .player-card {
-      background-color: #161b22;
-      border: 1px solid #30363d;
-      padding: 0.75rem;
-      border-radius: 8px;
-      transition: transform 0.3s;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .player-card:hover, .player-card:focus {
-      transform: scale(1.05);
-      outline: none;
-    }
-
-    .player-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .player-card.captain {
-      border: 2px solid gold;
-      box-shadow: 0 0 8px gold;
-    }
-
-    .player-card.vice-captain {
-      border: 2px solid silver;
-      box-shadow: 0 0 8px silver;
-    }
-
-    .player-card.advisor {
-      border: 2px solid #cd7f32; /* Bronze color for advisors */
-      box-shadow: 0 0 8px #cd7f32;
-    }
-
-    .player-card.captain::after,
-    .player-card.vice-captain::after,
-    .player-card.advisor::after {
-      content: attr(data-role);
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      padding: 3px 6px;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 0.75rem;
-      color: black;
-      user-select: none;
-    }
-
-    .player-card.captain::after {
-      background: gold;
-      content: "Captain";
-    }
-
-    .player-card.vice-captain::after {
-      background: silver;
-      content: "Vice Captain";
-    }
-
-    .player-card.advisor::after {
-      background: #cd7f32; /* Bronze background for advisor label */
-      content: "Advisor";
+    .team-button-container {
+      margin-top: 1.5rem;
+      text-align: center;
     }
 
     .schedule {
-      background: #21262d;
+      background-color: #21262d;
       border-radius: 8px;
       padding: 1rem;
-      box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.2);
       margin: 1rem auto;
-      max-width: 100%;
+      max-width: auto;
     }
 
     @keyframes pulse {
@@ -313,8 +264,7 @@
 
     .schedule table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+      border-collapse: collapse;
       background: #161b22;
       border-radius: 8px;
       overflow: hidden;
@@ -376,9 +326,8 @@
     }
 
     .highlight-img {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16/9;
+      width: auto;
+      height: 100%;
       max-height: 200px;
       border-radius: 8px;
       object-fit: cover;
@@ -386,7 +335,7 @@
 
     .highlight-video {
       width: 100%;
-      aspect-ratio: 16/9;
+      height: auto;
       max-height: 200px;
       border-radius: 8px;
       border: none;
@@ -538,37 +487,6 @@
       margin-top: 1rem;
     }
 
-    #playerModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background: #161b22;
-      max-width: 90%;
-      margin: 1rem;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #30363d;
-      text-align: center;
-    }
-
-    .modal-content img {
-      width: 100%;
-      max-height: 250px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-    }
-
     #stats {
       background: #21262d;
       border-radius: 8px;
@@ -691,38 +609,14 @@
     }
 
     @media (max-width: 768px) {
-      body {
-        font-size: 14px;
-      }
-
-      .hero-content h1 {
-        font-size: 2rem;
-      }
-      .hero-content p {
-        font-size: 0.9rem;
-      }
-      .hero-slideshow {
-        height: 50vh;
-      }
-      .contact-links a {
-        width: 50px;
-        height: 50px;
-      }
-      .contact-links img {
-        width: 30px;
-        height: 30px;
-      }
-      .blog-posts article {
-        min-width: 180px;
-        max-width: 180px;
-      }
-      .modal-content {
-        margin: 0.5rem;
-        padding: 0.75rem;
-      }
-      #hamburger {
-        display: block;
-      }
+      body { font-size: 14px; }
+      .hero-content h1 { font-size: 2rem; }
+      .hero-content p { font-size: 0.9rem; }
+      .hero-slideshow { min-height: 40vh; max-height: 50vh; }
+      .contact-links a { width: 50px; height: 50px; }
+      .contact-links img { width: 30px; height: 30px; }
+      .blog-posts article { min-width: 180px; max-width: 180px; }
+      #hamburger { display: block; }
       #nav-menu {
         display: none;
         flex-direction: column;
@@ -734,122 +628,63 @@
         padding: 0.5rem;
         z-index: 999;
       }
-      nav ul li {
-        padding: 0.5rem 0;
-        width: 100%;
-        text-align: center;
+      nav ul li { padding: 0.5rem 0; width: 100%; text-align: center; }
+      .highlight-btn {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+        animation: glowPulseMobile 2.5s ease-in-out infinite;
+        width: 90%;
+        max-width: 300px;
       }
-      .highlights-grid {
-        grid-template-columns: 1fr;
+      @keyframes glowPulseMobile {
+        0% { box-shadow: 0 0 8px rgba(40, 167, 69, 0.6), 0 0 15px rgba(40, 167, 69, 0.4); }
+        50% { box-shadow: 0 0 12px rgba(40, 167, 69, 0.8), 0 0 20px rgba(40, 167, 69, 0.6); }
+        100% { box-shadow: 0 0 8px rgba(40, 167, 69, 0.6), 0 0 15px rgba(40, 167, 69, 0.4); }
       }
-      .schedule {
-        padding: 0.5rem;
+      .highlight-btn:hover, .highlight-btn:focus, .highlight-btn:active {
+        transform: scale(1.03);
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.9), 0 0 25px rgba(40, 167, 69, 0.7);
       }
-      .schedule th, .schedule td {
-        padding: 0.5rem;
-        font-size: 0.75rem;
-      }
-      .highlight {
-        padding: 0.75rem;
-      }
-      .highlight-img, .highlight-video {
-        max-height: 180px;
-      }
-      .players {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      }
-      .player-card img {
-        height: 150px;
-      }
-      .player-card h3 {
-        font-size: 0.95rem;
-      }
-      #quiz-game {
-        padding: 0.75rem;
-      }
-      #question {
-        font-size: 0.9rem;
-      }
-      .option-label {
-        font-size: 0.85rem;
-      }
-      .spinner {
-        font-size: 3rem; /* Smaller spinner on mobile */
-      }
+      .highlights-grid { grid-template-columns: 1fr; }
+      .schedule { padding: 0.5rem; }
+      .schedule th, .schedule td { padding: 0.5rem; font-size: 0.75rem; }
+      .highlight { padding: 0.75rem; }
+      .highlight-img, .highlight-video { max-height: 180px; }
+      #quiz-game { padding: 0.75rem; }
+      #question { font-size: 0.9rem; }
+      .option-label { font-size: 0.85rem; }
+      .spinner { font-size: 3rem; }
     }
 
     @media (max-width: 480px) {
-      body {
-        font-size: 12px;
+      body { font-size: 12px; }
+      nav { padding: 0.75rem; }
+      nav img { height: 40px; }
+      #hamburger { font-size: 1.5rem; }
+      #nav-menu { top: 60px; }
+      .hero-content h1 { font-size: 1.5rem; }
+      .hero-content p { font-size: 0.8rem; }
+      .hero-slideshow { min-height: 30vh; max-height: 40vh; }
+      h2 { font-size: 1.5rem; }
+      .gallery { grid-template-columns: 1fr; }
+      .gallery img { max-height: 150px; }
+      .schedule th, .schedule td { padding: 0.4rem; font-size: 0.7rem; }
+      .stats-counter div { min-width: 80px; padding: 0.5rem; }
+      .stats-counter span { font-size: 1.2rem; }
+      .contact-links a { width: 40px; height: 40px; }
+      .contact-links img { width: 25px; height: 25px; }
+      .blog-posts article { min-width: 150px; max-width: 150px; }
+      #football { font-size: 2rem; width: 40px; height: 40px; line-height: 40px; }
+      .highlight-btn {
+        padding: 0.9rem 1.2rem;
+        font-size: 1rem;
+        box-shadow: 0 0 6px rgba(40, 167, 69, 0.5);
+        animation: glowPulseMobile 3s ease-in-out infinite;
+        width: 85%;
       }
-      nav {
-        padding: 0.75rem;
-      }
-      nav img {
-        height: 40px;
-      }
-      #hamburger {
-        font-size: 1.5rem;
-      }
-      #nav-menu {
-        top: 60px;
-      }
-      .hero-content h1 {
-        font-size: 1.5rem;
-      }
-      .hero-content p {
-        font-size: 0.8rem;
-      }
-      .hero-slideshow {
-        height: 40vh;
-      }
-      h2 {
-        font-size: 1.5rem;
-      }
-      .players {
-        grid-template-columns: 1fr;
-      }
-      .player-card img {
-        height: 120px;
-      }
-      .gallery {
-        grid-template-columns: 1fr;
-      }
-      .gallery img {
-        max-height: 150px;
-      }
-      .schedule th, .schedule td {
-        padding: 0.4rem;
-        font-size: 0.7rem;
-      }
-      .stats-counter div {
-        min-width: 80px;
-        padding: 0.5rem;
-      }
-      .stats-counter span {
-        font-size: 1.2rem;
-      }
-      .contact-links a {
-        width: 40px;
-        height: 40px;
-      }
-      .contact-links img {
-        width: 25px;
-        height: 25px;
-      }
-      .blog-posts article {
-        min-width: 150px;
-        max-width: 150px;
-      }
-      #football {
-        font-size: 2rem;
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-      }
-      .spinner {
-        font-size: 2.5rem; /* Smaller spinner on small screens */
-      }
+      .spinner { font-size: 2.5rem; }
     }
   </style>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
@@ -864,7 +699,7 @@
       <img src="logo1.jpeg" alt="Nutmeg Syndicate FC Logo" loading="lazy">
       <ul id="nav-menu">
         <li><a href="#about">About</a></li>
-        <li><a href="#team">Team</a></li>
+        <li><a href="players.html" class="highlight-btn">Team</a></li>
         <li><a href="#schedule">Matches</a></li>
         <li><a href="#stats">Stats</a></li>
         <li><a href="#highlights">Highlights</a></li>
@@ -898,63 +733,21 @@
 
     <section id="about">
       <h2>About the Club</h2>
-      <p>
-        Nutmeg Syndicate is an ambitious new eFootball club that has set its sights on reaching the pinnacle of competitive gaming. Founded by a passionate group of gamers, Nutmeg Syndicate is driven by a shared vision of excellence and a commitment to becoming a dominant force in the eFootball community. With a name inspired by the classic football maneuver "nutmeg," the club embodies creativity, skill, and the art of outsmarting opponents on the virtual pitch.
+      <p>Nutmeg Syndicate is an ambitious new eFootball club that has set its sights on reaching the pinnacle of competitive gaming. Founded by a passionate group of gamers, Nutmeg Syndicate is driven by a shared vision of excellence and a commitment to becoming a dominant force in the eFootball community. With a name inspired by the classic football maneuver "nutmeg," the club embodies creativity, skill, and the art of outsmarting opponents on the virtual pitch.
         
         As a fresh contender in the eFootball arena, Nutmeg Syndicate is fueled by an unwavering determination to climb the ranks and make a name for itself. The club is dedicated to honing its players' skills through rigorous training sessions, strategic gameplay, and a focus on teamwork. Each member brings unique talents to the squad, and together, they are committed to developing a cohesive unit that can take on any challenge.
         
-        Nutmeg Syndicate understands that the journey to the top is not just about individual talent; it's about building a strong community and fostering a culture of support and collaboration. The club actively engages with its fans and aspiring players, creating an inclusive environment where everyone can share their love for eFootball. Through live streams, community events, and interactive content, Nutmeg Syndicate seeks to inspire others and cultivate a loyal following that believes their mission.
+        Nutmeg Syndicate understands that the journey to the top is not just about individual talent; it's about building a strong community and fostering a culture of support and collaboration. The club actively engages with its fans and aspiring players, creating an inclusive environment where everyone can share their love for eFootball. Through live streams, community events, and interactive content, Nutmeg Syndicate aims to inspire others and cultivate a loyal following that believes in their mission.
         
-        With a clear vision for the future, Nutmeg Syndicate is focused on setting ambitious goals and achieving greatness. We are determined to participate in tournaments, compete at the highest levels, and earn recognition in the eFootball scene. Every match is an opportunity to learn, improve, and push the boundaries of what's possible.
+        With a clear vision for the future, Nutmeg Syndicate is focused on setting ambitious goals and striving for greatness. The club is determined to participate in tournaments, showcase its skills, and earn recognition in the eFootball scene. Every match is an opportunity to learn, grow, and push the boundaries of what is possible.
         
-        As Nutmeg Syndicate embarks on this exciting journey, we invite players and supporters to join us in our quest for success. Together, we will navigate the challenges of the competitive landscape, celebrate victories, and learn from setbacks. Nutmeg Syndicate is more than a club—it's a movement fueled by passion, ambition, and the pursuit of excellence.
+        As Nutmeg Syndicate embarks on this exciting journey, it invites players and fans alike to join them in their quest for success. Together, they will navigate the challenges of the competitive landscape, celebrate victories, and learn from setbacks. Nutmeg Syndicate is not just a club; it is a movement fueled by passion, ambition, and the relentless pursuit of excellence.
         
-        Join Nutmeg Syndicate and be part of a new era in eFootball, where every match is a step toward greatness and every player has the opportunity to shine. Let's make history together!</p>
-    </section>
-
-    <section id="team">
-      <h2>Meet the Players</h2>
-      <div class="players">
-        <div class="player-card captain" data-role="Captain" data-stats="">
-          <img src="captain.jpg" alt="Saleh Ahmed Kha" loading="lazy">
-          <h3>Saleh Ahmed Kha</h3>
-        </div>
-        <div class="player-card vice-captain" data-role="Vice-Captain" data-stats="">
-          <img src="vicecaptain.jpg" alt="Samin Intisar" loading="lazy">
-          <h3>Samin Intisar</h3>
-        </div>
-        <div class="player-card advisor" data-role="Advisor" data-stats=""><img src="advisor1.jpg" alt="Muhammad Rakib Uddin" loading="lazy"><h3>Muhammad Rakib Uddin</h3></div>
-        <div class="player-card advisor" data-role="Advisor" data-stats=""><img src="advisor2.jpg" alt="Imran Hosen" loading="lazy"><h3>Imran Hosen</h3></div>
-        <div class="player-card advisor" data-role="Advisor" data-stats=""><img src="advisor3.jpg" alt="Mehedi Foysal" loading="lazy"><h3>Mehedi Foysal</h3></div>
-        <div class="player-card" data-stats=""><img src="player1.jpg" alt="Junayed Sunvee" loading="lazy"><h3>Junayed Sunvee</h3></div>
-        <div class="player-card" data-stats=""><img src="player2.jpg" alt="Orko Sanjan" loading="lazy"><h3>Orko Sanjan</h3></div>
-        <div class="player-card" data-stats=""><img src="player3.jpg" alt="Alamin Hossain Anik" loading="lazy"><h3>Alamin Hossain Anik</h3></div>
-        <div class="player-card" data-stats=""><img src="player4.jpg" alt="Salman Farsi" loading="lazy"><h3>Salman Farsi</h3></div>
-        <div class="player-card" data-stats=""><img src="player5.jpg" alt="Mehedi Hasan Jeechan" loading="lazy"><h3>Mehedi Hasan Jeechan</h3></div>
-        <div class="player-card" data-stats=""><img src="player6.jpg" alt="Hridoy Hasan" loading="lazy"><h3>Hridoy Hasan</h3></div>
-        <div class="player-card" data-stats=""><img src="player7.jpg" alt="Musa Shakil" loading="lazy"><h3>Musa Shakil</h3></div>
-        <div class="player-card" data-stats=""><img src="player8.jpg" alt="Jarif Mehtab" loading="lazy"><h3>Jarif Mehtab</h3></div>
-        <div class="player-card" data-stats=""><img src="player9.jpg" alt="Akanto Datta" loading="lazy"><h3>Akanto Datta</h3></div>
-        <div class="player-card" data-stats=""><img src="player10.jpg" alt="Abyaz Mansur" loading="lazy"><h3>Abyaz Mansur</h3></div>
-        <div class="player-card" data-stats=""><img src="player11.jpg" alt="Shahid" loading="lazy"><h3>Shahid</h3></div>
-        <div class="player-card" data-stats=""><img src="player12.jpg" alt="Shakawat Alam Efty" loading="lazy"><h3>Shakawat Alam Efty</h3></div>
-        <div class="player-card" data-stats=""><img src="player13.jpg" alt="Hridoy Ahamed" loading="lazy"><h3>Hridoy Ahamed</h3></div>
-        <div class="player-card" data-stats=""><img src="player14.jpg" alt="Ahad Sarker" loading="lazy"><h3>Ahad Sarker</h3></div>
-        <div class="player-card" data-stats=""><img src="player15.jpg" alt="AY AN Rahim" loading="lazy"><h3>Ayan Rahim</h3></div>
-        <div class="player-card" data-stats=""><img src="player16.jpg" alt="Minhaz Sarker Joy" loading="lazy"><h3>Minhaz Sarker Joy</h3></div>
-        <div class="player-card" data-stats=""><img src="player17.jpg" alt="Tanim Finnegan" loading="lazy"><h3>Tanim Finnegan</h3></div>
-        <div class="player-card" data-stats=""><img src="player18.jpg" alt="Sarwar Alam" loading="lazy"><h3>Sarwar Alam</h3></div>
+        Join Nutmeg Syndicate and be part of a new era in eFootball, where every match is a step toward greatness and every player has the chance to shine. Together, let's reach for the top and make our mark in the world of eFootball!</p>
+      <div class="team-button-container">
+        <a href="players.html" class="highlight-btn">Meet Our Team</a>
       </div>
     </section>
-
-    <div id="playerModal" role="dialog" aria-labelledby="player-name" aria-modal="true">
-      <div class="modal-content">
-        <img id="player-image" src="" alt="Player Image" loading="lazy">
-        <h3 id="player-name"></h3>
-        <p id="player-stats"></p>
-        <button onclick="closeModal()" aria-label="Close modal">Close</button>
-      </div>
-    </div>
 
     <section id="schedule" class="schedule">
       <h2>Match Schedule</h2>
@@ -988,56 +781,21 @@
       </div>
     </section>
 
-
-
     <section id="blog">
       <h2>Latest News</h2>
       <div class="blog-posts">
         <div class="blog-posts-wrapper">
-          <article>
-            <h3>Nutmeg Syndicate Wins Big!</h3>
-            <p>Nutmeg Syndicate wins their first unofficial match against Glitch United</p>
-          </article>
-          <article>
-            <h3>SIGNS up for Cobeg</h3>
-            <p>Our club has started the journey with Cobeg Community</p>
-          </article>
-          <article>
-            <h3>Player Man of the Match</h3>
-            <p>Muhammad Rakib Uddin secures Man of the Match Against Glitch United </p>
-          </article>
-          <article>
-            <h3>New Logo Launch Event</h3>
-            <p>We unveiled our club logo</p>
-          </article>
-          <article>
-            <h3>Website Launch</h3>
-            <p>First ever club to launch their own website</p>
-          </article>
-          <article>
-            <h3>Community Outreach Program</h3>
-            <p>Nutmeg Syndicate is looking to participate in community ased tournaments</p>
-          </article>
-          <article>
-            <h3>Nutmeg Syndicate Wins Big!</h3>
-            <p>Our team dominated the weekend match with style and flair.</p>
-          </article>
-          <article>
-            <h3>Upcoming Friendly Matches</h3>
-            <p>Join us for upcoming friendly matches and community events this summer season.</p>
-          </article>
-          <article>
-            <h3>Player Spotlight: Imran Hosen</h3>
-            <p>The star player has just joined our club</p>
-          </article>
-          <article>
-            <h3>New player sign ups</h3>
-            <p>A number of players have joined our club</p>
-          </article>
-          <article>
-            <h3>Looking for new players</h3>
-            <p>We urge players to join trial group and join our club</p>
-          </article>
+          <article><h3>Nutmeg Syndicate Wins Big!</h3><p>Nutmeg Syndicate wins their first unofficial match against Glitch United</p></article>
+          <article><h3>SIGNS up for Cobeg</h3><p>Our club has started the journey with Cobeg Community</p></article>
+          <article><h3>Player Man of the Match</h3><p>Muhammad Rakib Uddin secures Man of the Match Against Glitch United</p></article>
+          <article><h3>New Logo Launch Event</h3><p>We unveiled our club logo</p></article>
+          <article><h3>Website Launch</h3><p>First ever club to launch their own website</p></article>
+          <article><h3>Community Outreach Program</h3><p>Nutmeg Syndicate is looking to participate in community-based tournaments</p></article>
+          <article><h3>Nutmeg Syndicate Wins Big!</h3><p>Our team dominated the weekend match with style and flair.</p></article>
+          <article><h3>Upcoming Friendly Matches</h3><p>Join us for upcoming friendly matches and community events this summer season.</p></article>
+          <article><h3>Player Spotlight: Imran Hosen</h3><p>The star player has just joined our club</p></article>
+          <article><h3>New player sign ups</h3><p>A number of players have joined our club</p></article>
+          <article><h3>Looking for new players</h3><p>We urge players to join trial group and join our club</p></article>
         </div>
       </div>
     </section>
@@ -1070,17 +828,21 @@
     </footer>
   </div>
   <script defer>
-    // Loading Screen
     window.addEventListener('load', () => {
       setTimeout(() => {
         const loadingScreen = document.getElementById('loading-screen');
         const mainContent = document.getElementById('main-content');
         loadingScreen.style.display = 'none';
         mainContent.style.display = 'block';
-      }, 1000); // 5 seconds
+        if (window.location.hash) {
+          const targetSection = document.querySelector(window.location.hash);
+          if (targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }, 1000);
     });
 
-    // Theme Toggle
     const toggle = document.getElementById('theme-toggle');
     toggle.addEventListener('click', () => {
       document.body.classList.toggle('light-mode');
@@ -1092,7 +854,6 @@
       toggle.textContent = '🌞';
     }
 
-    // Hamburger Menu
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
     hamburger.addEventListener('click', () => {
@@ -1100,7 +861,6 @@
       hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active'));
     });
 
-    // Slideshow Animation
     const slides = document.querySelectorAll('.slide');
     let currentSlide = 0;
 
@@ -1112,7 +872,6 @@
 
     setInterval(nextSlide, 3000);
 
-    // Image Error Handling for Slideshow
     document.querySelectorAll('.slide-image').forEach(img => {
       img.addEventListener('error', () => {
         img.src = 'fallback.jpg';
@@ -1120,44 +879,6 @@
       });
     });
 
-    // Player Modal
-    document.querySelectorAll('.player-card').forEach(card => {
-      card.setAttribute('tabindex', '0');
-      card.addEventListener('click', openModal);
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openModal(e);
-        }
-      });
-
-      function openModal(e) {
-        const name = card.querySelector('h3').textContent.split('<br>')[0];
-        const stats = card.dataset.stats || 'No stats available';
-        const image = card.querySelector('img').src;
-        document.getElementById('player-name').textContent = name;
-        document.getElementById('player-stats').textContent = stats;
-        document.getElementById('player-image').src = image;
-        document.getElementById('player-image').alt = `Image of ${name}`;
-        document.getElementById('playerModal').style.display = 'flex';
-        document.querySelector('#playerModal button').focus();
-      }
-    });
-
-    function closeModal() {
-      const modal = document.getElementById('playerModal');
-      if (modal.style.display === 'flex') {
-        modal.style.display = 'none';
-      }
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.getElementById('playerModal').style.display === 'flex') {
-        closeModal();
-      }
-    });
-
-    // Stats Counter Animation
     function animateCounter(id, end, duration) {
       let start = 0;
       const stepTime = Math.abs(Math.floor(duration / end));
@@ -1172,76 +893,10 @@
     animateCounter('matches', 1, 3000);
     animateCounter('wins', 1, 3000);
 
-    // Highlights Video Toggle
-    document.querySelectorAll('.toggle-video').forEach(button => {
-      let isToggling = false;
-      button.addEventListener('click', () => {
-        if (isToggling) return;
-        isToggling = true;
-        setTimeout(() => { isToggling = false; }, 500);
-
-        const highlight = button.parentElement;
-        const img = highlight.querySelector('.highlight-img');
-        const video = highlight.querySelector('.highlight-video');
-        const error = highlight.querySelector('.video-error');
-
-        if (video.style.display === 'none') {
-          video.src = video.dataset.src + '&rel=0&modestbranding=1&controls=1';
-          video.style.display = 'block';
-          img.style.display = 'none';
-          error.style.display = 'none';
-          button.textContent = 'Show Image';
-        } else {
-          video.src = '';
-          video.style.display = 'none';
-          img.style.display = 'block';
-          error.style.display = 'none';
-          button.textContent = 'Watch Video';
-        }
-      });
-
-      const video = button.parentElement.querySelector('.highlight-video');
-      video.addEventListener('error', () => {
-        const error = button.parentElement.querySelector('.video-error');
-        video.style.display = 'none';
-        button.parentElement.querySelector('.highlight-img').style.display = 'block';
-        error.style.display = 'block';
-        button.textContent = 'Watch Video';
-      });
-    });
-
-    // Quiz Game Logic
     const questions = [
       { question: "Who won the FIFA World Cup in 2022?", answer: "Argentina", options: ["Argentina", "France", "Brazil", "Germany"] },
       { question: "Which player has won the most Ballon d'Or awards?", answer: "Lionel Messi", options: ["Lionel Messi", "Cristiano Ronaldo", "Johan Cruyff", "Michel Platini"] },
       { question: "Which club has won the most UEFA Champions League titles?", answer: "Real Madrid", options: ["Real Madrid", "AC Milan", "Barcelona", "Liverpool"] },
-      { question: "In which year was the first FIFA World Cup held?", answer: "1930", options: ["1930", "1926", "1934", "1922"] },
-      { question: "Which country has won the most FIFA World Cup titles?", answer: "Brazil", options: ["Brazil", "Italy", "Germany", "Argentina"] },
-      { question: "Who is the all-time top scorer for Brazil's national team?", answer: "Pele", options: ["Pele", "Ronaldo", "Neymar", "Romario"] },
-      { question: "Which English club is known as 'The Red Devils'?", answer: "Manchester United", options: ["Manchester United", "Arsenal", "Chelsea", "Liverpool"] },
-      { question: "What is the nickname of the Spanish national football team?", answer: "La Roja", options: ["La Roja", "Azzurri", "Oranje", "Les Bleus"] },
-      { question: "Which player scored the 'Hand of God' goal in 1986?", answer: "Diego Maradona", options: ["Diego Maradona", "Lionel Messi", "Pele", "Zinedine Zidane"] },
-      { question: "Which stadium is known as 'The Theatre of Dreams'?", answer: "Old Trafford", options: ["Old Trafford", "Anfield", "Camp Nou", "Santiago Bernabeu"] },
-      { question: "Who won the Premier League in the 2022-23 season?", answer: "Manchester City", options: ["Manchester City", "Arsenal", "Liverpool", "Tottenham"] },
-      { question: "Which country hosted the 2014 FIFA World Cup?", answer: "Brazil", options: ["Brazil", "Germany", "South Africa", "Russia"] },
-      { question: "Who is the all-time top scorer in the UEFA Champions League?", answer: "Cristiano Ronaldo", options: ["Cristiano Ronaldo", "Lionel Messi", "Raul", "Robert Lewandowski"] },
-      { question: "Which club did Zinedine Zidane manage to three consecutive Champions League titles?", answer: "Real Madrid", options: ["Real Madrid", "Spain", "Juventus", "Bayern Munich"] },
-      { question: "What is the name of FC Barcelona's home stadium?", answer: "Camp Nou", options: ["Camp Nou", "Santiago Bernabeu", "Wanda Metropolitano", "Parc des Princes"] },
-      { question: "Which Italian club is known as 'The Old Lady'?", answer: "Juventus", options: ["Juventus", "AC Milan", "Inter Milan", "AS Roma"] },
-      { question: "Who won the 2019 Copa América?", answer: "Brazil", options: ["Brazil", "Argentina", "Chile", "Uruguay"] },
-      { question: "Which player is known as 'CR7'?", answer: "Cristiano Ronaldo", options: ["Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "Kylian Mbappé"] },
-      { question: "Which country won the first UEFA European Championship in 1960?", answer: "Soviet Union", options: ["Soviet Union", "West Germany", "Spain", "Italy"] },
-      { question: "What is the nickname of the German national football team?", answer: "Die Mannschaft", options: ["Die Mannschaft", "Les Bleus", "Azzurri", "France"] },
-      { question: "Which club won the first Premier League title in 1992-93?", answer: "Manchester United", options: ["Manchester United", "Arsenal", "Leeds United", "Blackburn Rovers"] },
-      { question: "Who scored the winning goal in the 2010 World Cup final?", answer: "Andres Iniesta", options: ["Andres Iniesta", "Spain", "Xavi", "Iker Casillas"] },
-      { question: "Which African country has won the most Africa Cup of Nations titles?", answer: "Egypt", options: ["Egypt", "Nigeria", "Ghana", "Cameroon"] },
-      { question: "What is the name of Liverpool's home stadium?", answer: "Anfield", options: ["Anfield", "Old Trafford", "Emirates Stadium", "Stamford Bridge"] },
-      { question: "Which player is known for the 'Panenka' penalty?", answer: "Antonin Panenka", options: ["Antonin Panenka", "Spain", "Andrea Pirlo", "Roberto Baggio"] },
-      { question: "Which country hosted the 2002 FIFA World Cup?", answer: "South Korea and Japan", options: ["South Korea", "South Korea and Japan", "Germany", "Japan", "United States"] },
-      { question: "Who won the Ballon d'Or in 2021?", answer: "Lionel Messi", options: ["Lionel Messi", "Lionel Messi", "Cristiano Ronaldo", "Robert Lewandowski", "Jorginho"] },
-      { question: "Which club is known as 'The Gunners'?", answer: "Arsenal", options: ["Arsenal", "Chelsea", "A", "Manchester City"] },
-      { question: "What is the nickname of the Brazilian national football team?", answer: "Seleção", options: ["Seleção", "Brazil", "La Roja", "Roja", "Azz"] },
-      { question: "Who was the top scorer in the 2018 FIFA World Cup?", answer: "Harry Kane", options: ["Harry Kane", "England", "France", "", "Kylian Mbappé", "Romelu", "Lukaku", "", "Cristiano Ronaldo"] },
     ];
 
     const questionDiv = document.getElementById('question');
