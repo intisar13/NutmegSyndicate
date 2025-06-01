@@ -232,6 +232,16 @@
     .player-card.vice-captain::after { background: silver; content: "Vice Captain"; }
     .player-card.advisor::after { background: #cd7f32; content: "Advisor"; }
 
+    .player-card h3 {
+      cursor: pointer;
+    }
+
+    .player-card h3:hover,
+    .player-card h3:focus {
+      color: #007bff;
+      outline: none;
+    }
+
     #playerModal {
       display: none;
       position: fixed;
@@ -540,14 +550,12 @@
         </div>
       </div>
 
-      
-      
       <div class="hometn">
-      <a href="index.html">
-        <button>GO TO HOME PAGE</button>
-    </a>
-</div>
-     
+        <a href="index.html">
+          <button>GO TO HOME PAGE</button>
+        </a>
+      </div>
+
       <table class="players-table">
         <thead>
           <tr>
@@ -623,7 +631,6 @@
       hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active'));
     });
 
-    // Collapse mobile menu after clicking a link
     document.querySelectorAll('#nav-menu a').forEach(link => {
       link.addEventListener('click', () => {
         if (window.innerWidth <= 768) {
@@ -639,11 +646,11 @@
       }, { passive: false });
     });
 
-    document.querySelectorAll('.player-card').forEach(card => {
-      card.setAttribute('tabindex', '0');
-      card.addEventListener('click', handleOpenModal);
-      card.addEventListener('touchstart', handleOpenModal, { passive: false });
-      card.addEventListener('keydown', (event) => {
+    document.querySelectorAll('.player-card h3').forEach(nameElement => {
+      nameElement.setAttribute('tabindex', '0');
+      nameElement.addEventListener('click', handleOpenModal);
+      nameElement.addEventListener('touchstart', handleOpenModal, { passive: false });
+      nameElement.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           handleOpenModal(event);
@@ -653,8 +660,8 @@
       function handleOpenModal(event) {
         event.preventDefault();
         try {
-          const nameElement = card.querySelector('h3');
-          const name = nameElement ? nameElement.textContent.trim() : 'Unknown Player';
+          const card = event.target.closest('.player-card');
+          const name = event.target.textContent.trim() || 'Unknown Player';
           const stats = card.dataset.stats || 'No stats available';
           const imageElement = card.querySelector('img');
           const imageSrc = imageElement ? imageElement.src : '';
@@ -689,7 +696,6 @@
       }
     });
 
-    // Fallback for image load errors
     document.querySelectorAll('.player-card img').forEach(img => {
       img.addEventListener('error', () => {
         img.src = 'https://via.placeholder.com/1920x1080?text=Player+Image';
