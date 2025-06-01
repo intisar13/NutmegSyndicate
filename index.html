@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutmeg Syndicate FC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #0d1117;
+      color: #ffffff;
+      transition: background-color 0.4s, color 0.4s;
+      font-size: 16px;
+    }
+
+    #main-content {
+      display: none; /* Initially hide main content */
+    }
+
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0d1117; /* Match body background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000; /* Above all other content */
+    }
+
+    .spinner {
+      font-size: 4rem; /* Size of football emoji */
+      animation: spin 1.5s linear infinite; /* Spinning animation */
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .light-mode {
+      background: #f0f6fc;
+      color: #333;
+    }
+    .light-mode #loading-screen {
+      background: #f0f6fc; /* Match light mode background */
+    }
+    .light-mode nav, .light-mode footer { background: #333; }
+    .light-mode .player-card, .light-mode #quiz-game, .light-mode .modal-content {
+      background: #fff;
+      border-color: #d0d7de;
+    }
+    .light-mode .blog-posts { background: #e6edf3; }
+    .light-mode .blog-posts article { background: #fff; }
+    .light-mode #stats { background: #e6edf3; }
+    .light-mode .stats-counter div { background: #fff; }
+    .light-mode #highlights .highlight { background: #e6edf3; }
+    .light-mode .schedule { 
+      background: #e6edf3; /* Lighter background for light mode */
+    }
+    .light-mode .schedule table { 
+      background: #fff; /* White table background */
+    }
+    .light-mode .schedule th {
+      background: #005bb5; /* Darker blue for headers */
+      color: #fff;
+    }
+    .light-mode .schedule td {
+      background: #f0f6fc; /* Light background for cells */
+      color: #333; /* Dark text for readability */
+    }
+    .light-mode .schedule tr:hover td {
+      background: #d0d7de; /* Hover effect */
+    }
+    .light-mode .schedule tr:nth-child(even) td {
+      background: #e6edf3; /* Alternating row color */
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: #161b22;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
+
+    nav img {
+      height: 50px;
+      object-fit: contain;
+    }
+
+    #hamburger {
+      display: none;
+      font-size: 1.8rem;
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      z-index: 1001;
+      padding: 0.5rem;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #nav-menu.active {
+      display: flex;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 600;
+      transition: color 0.3s;
+      padding: 0.75rem;
+      display: block;
+      font-size: 1rem;
+    }
+
+    nav ul li a:hover, nav ul li a:focus {
+      color: #007bff;
+      outline: none;
+    }
+
+    #theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #fff;
+      transition: color 0.4s;
+      padding: 0.5rem;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    #theme-toggle:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    .hero-slideshow {
+      position: relative;
+      width: 100%;
+      height: 90vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      margin-top: 1%;
+    }
+
+    .hero-content h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .hero-content p {
+      font-size: 1rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    section {
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.75rem;
+      color: #007bff;
+    }
+
+    .players {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .player-card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      padding: 0.75rem;
+      border-radius: 8px;
+      transition: transform 0.3s;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .player-card:hover, .player-card:focus {
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    .player-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .player-card.captain {
+      border: 2px solid gold;
+      box-shadow: 0 0 8px gold;
+    }
+
+    .player-card.vice-captain {
+      border: 2px solid silver;
+      box-shadow: 0 0 8px silver;
+    }
+
+    .player-card.advisor {
+      border: 2px solid #cd7f32; /* Bronze color for advisors */
+      box-shadow: 0 0 8px #cd7f32;
+    }
+
+    .player-card.captain::after,
+    .player-card.vice-captain::after,
+    .player-card.advisor::after {
+      content: attr(data-role);
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.75rem;
+      color: black;
+      user-select: none;
+    }
+
+    .player-card.captain::after {
+      background: gold;
+      content: "Captain";
+    }
+
+    .player-card.vice-captain::after {
+      background: silver;
+      content: "Vice Captain";
+    }
+
+    .player-card.advisor::after {
+      background: #cd7f32; /* Bronze background for advisor label */
+      content: "Advisor";
+    }
+
+    .schedule {
+      background: #21262d;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+      margin: 1rem auto;
+      max-width: 100%;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px rgba(88, 166, 255, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(88, 166, 255, 0.7); }
+      100% { box-shadow: 0 0 10px rgba(88, 166, 255, 0.5); }
+    }
+
+    .schedule table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #161b22;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .schedule th, .schedule td {
+      padding: 0.75rem;
+      border: 1px solid #007bff;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .schedule th {
+      background: #007bff;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .schedule td {
+      background-color: #21262d;
+    }
+
+    .schedule tr:hover td {
+      background-color: #30363d;
+    }
+
+    .schedule tr:nth-child(even) td {
+      background: #333333;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .gallery img {
+      width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .highlight {
+      background: #21262d;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      text-align: center;
+    }
+
+    .highlight-img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16/9;
+      max-height: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .highlight-video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      max-height: 200px;
+      border-radius: 8px;
+      border: none;
+      display: none;
+    }
+
+    .video-error {
+      display: none;
+      color: #ff4444;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .toggle-video {
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      background-color: #238636;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .toggle-video:hover, .toggle-video:focus {
+      background-color: #2ea043;
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    .highlight h4 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      color: #007bff;
+    }
+
+    .blog-posts {
+      margin-top: 1rem;
+      padding: 0.5rem 0;
+      background-color: #21262d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .blog-posts-wrapper {
+      display: flex;
+      animation: scroll 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .blog-posts-wrapper:hover {
+      animation-play-state: paused;
+    }
+
+    .blog-posts article {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      text-align: left;
+      margin-right: 1rem;
+      min-width: 200px;
+      max-width: 200px;
+      display: inline-block;
+      white-space: normal;
+      vertical-align: top;
+    }
+
+    .blog-posts article h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .blog-posts article p {
+      font-size: 0.8rem;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .contact {
+      max-width: 100%;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .contact-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background-color: #4267B2;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s, transform 0.3s;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .contact-links a:hover, .contact-links a:focus {
+      background-color: #365899;
+      transform: scale(1.1);
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    .contact-links img {
+      width: 40px;
+      height: 40px;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #238636;
+      border: none;
+      border-radius: 5px;
+      color: #ffffff;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      transition: background-color 0.3s;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    button:hover, button:focus {
+      background-color: #2ea043;
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    footer {
+      background-color: #161b22;
+      color: #8ea1d9;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    #playerModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #161b22;
+      max-width: 90%;
+      margin: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      text-align: center;
+    }
+
+    .modal-content img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    #stats {
+      background: #21262d;
+      border-radius: 8px;
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+
+    .stats-counter {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .stats-counter div {
+      background: #161b22;
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .stats-counter span {
+      display: block;
+      font-size: 1.5rem;
+      color: #007bff;
+    }
+
+    #football {
+      font-size: 2.5rem;
+      margin: 1rem auto;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      animation: bounce 3s infinite;
+      user-select: none;
+      text-align: center;
+      line-height: 50px;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+    }
+
+    #football:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    #quiz-game {
+      max-width: 100%;
+      margin: 1rem auto;
+      background-color: #161b22;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      color: #ffffff;
+      text-align: center;
+      user-select: none;
+    }
+
+    #question {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      min-height: 40px;
+    }
+
+    #options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: #21262d;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 0.9rem;
+      min-height: 44px;
+    }
+
+    .option-label:hover, .option-label:focus-within {
+      background-color: #30363d;
+    }
+
+    .option-label input[type="radio"] {
+      margin-right: 0.5rem;
+    }
+
+    #result {
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      min-height: 20px;
+      color: #007bff;
+    }
+
+    nav ul li.facebook-links {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    nav ul li.facebook-links a {
+      font-size: 1.2rem;
+      color: #ffffff;
+      transition: color 0.3s;
+    }
+
+    nav ul li.facebook-links a:hover, nav ul li.facebook-links a:focus {
+      color: #4267B2;
+      outline: none;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 14px;
+      }
+
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+      .hero-content p {
+        font-size: 0.9rem;
+      }
+      .hero-slideshow {
+        height: 50vh;
+      }
+      .contact-links a {
+        width: 50px;
+        height: 50px;
+      }
+      .contact-links img {
+        width: 30px;
+        height: 30px;
+      }
+      .blog-posts article {
+        min-width: 180px;
+        max-width: 180px;
+      }
+      .modal-content {
+        margin: 0.5rem;
+        padding: 0.75rem;
+      }
+      #hamburger {
+        display: block;
+      }
+      #nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: #161b22;
+        padding: 0.5rem;
+        z-index: 999;
+      }
+      nav ul li {
+        padding: 0.5rem 0;
+        width: 100%;
+        text-align: center;
+      }
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+      .schedule {
+        padding: 0.5rem;
+      }
+      .schedule th, .schedule td {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+      }
+      .highlight {
+        padding: 0.75rem;
+      }
+      .highlight-img, .highlight-video {
+        max-height: 180px;
+      }
+      .players {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+      .player-card img {
+        height: 150px;
+      }
+      .player-card h3 {
+        font-size: 0.95rem;
+      }
+      #quiz-game {
+        padding: 0.75rem;
+      }
+      #question {
+        font-size: 0.9rem;
+      }
+      .option-label {
+        font-size: 0.85rem;
+      }
+      .spinner {
+        font-size: 3rem; /* Smaller spinner on mobile */
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        font-size: 12px;
+      }
+      nav {
+        padding: 0.75rem;
+      }
+      nav img {
+        height: 40px;
+      }
+      #hamburger {
+        font-size: 1.5rem;
+      }
+      #nav-menu {
+        top: 60px;
+      }
+      .hero-content h1 {
+        font-size: 1.5rem;
+      }
+      .hero-content p {
+        font-size: 0.8rem;
+      }
+      .hero-slideshow {
+        height: 40vh;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      .players {
+        grid-template-columns: 1fr;
+      }
+      .player-card img {
+        height: 120px;
+      }
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+      .gallery img {
+        max-height: 150px;
+      }
+      .schedule th, .schedule td {
+        padding: 0.4rem;
+        font-size: 0.7rem;
+      }
+      .stats-counter div {
+        min-width: 80px;
+        padding: 0.5rem;
+      }
+      .stats-counter span {
+        font-size: 1.2rem;
+      }
+      .contact-links a {
+        width: 40px;
+        height: 40px;
+      }
+      .contact-links img {
+        width: 25px;
+        height: 25px;
+      }
+      .blog-posts article {
+        min-width: 150px;
+        max-width: 150px;
+      }
+      #football {
+        font-size: 2rem;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+      }
+      .spinner {
+        font-size: 2.5rem; /* Smaller spinner on small screens */
+      }
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+  <div id="loading-screen">
+    <div class="spinner">⚽</div>
+  </div>
+  <div id="main-content">
+    <button id="hamburger" aria-label="Toggle menu" aria-controls="nav-menu">☰</button>
+    <nav>
+      <img src="logo1.jpeg" alt="Nutmeg Syndicate FC Logo" loading="lazy">
+      <ul id="nav-menu">
+        <li><a href="#about">About</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#schedule">Matches</a></li>
+        <li><a href="#stats">Stats</a></li>
+        <li><a href="#highlights">Highlights</a></li>
+        <li><a href="#blog">News</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li class="facebook-links">
+          <a href="https://www.facebook.com/nutmegsyndicatefc" target="_blank" aria-label="Facebook Page"><i class="fab fa-facebook-square"></i></a>
+          <a href="https://www.facebook.com/groups/nutmegsyndicatefc" target="_blank" aria-label="Facebook Group"><i class="fab fa-facebook-f"></i></a>
+        </li>
+        <li><button id="theme-toggle" aria-label="Toggle theme">🌙</button></li>
+      </ul>
+    </nav>
+
+    <section class="hero-slideshow">
+      <div class="slides">
+        <div class="slide active">
+          <img src="c1.jpg" alt="Slideshow Image 1" class="slide-image" loading="lazy">
+        </div>
+        <div class="slide">
+          <img src="c2.jpg" alt="Slideshow Image 2" class="slide-image" loading="lazy">
+        </div>
+        <div class="slide">
+          <img src="c3.jpg" alt="Slideshow Image 3" class="slide-image" loading="lazy">
+        </div>
+      </div>
+      <div class="hero-content">
+        <h1>Nutmeg Syndicate</h1>
+        <p>Pride. Precision. Power</p>
+      </div>
+    </section>
+
+    <section id="about">
+      <h2>About the Club</h2>
+      <p>
+        Nutmeg Syndicate is an ambitious new eFootball club that has set its sights on reaching the pinnacle of competitive gaming. Founded by a passionate group of gamers, Nutmeg Syndicate is driven by a shared vision of excellence and a commitment to becoming a dominant force in the eFootball community. With a name inspired by the classic football maneuver "nutmeg," the club embodies creativity, skill, and the art of outsmarting opponents on the virtual pitch.
+        
+        As a fresh contender in the eFootball arena, Nutmeg Syndicate is fueled by an unwavering determination to climb the ranks and make a name for itself. The club is dedicated to honing its players' skills through rigorous training sessions, strategic gameplay, and a focus on teamwork. Each member brings unique talents to the squad, and together, they are committed to developing a cohesive unit that can take on any challenge.
+        
+        Nutmeg Syndicate understands that the journey to the top is not just about individual talent; it's about building a strong community and fostering a culture of support and collaboration. The club actively engages with its fans and aspiring players, creating an inclusive environment where everyone can share their love for eFootball. Through live streams, community events, and interactive content, Nutmeg Syndicate seeks to inspire others and cultivate a loyal following that believes their mission.
+        
+        With a clear vision for the future, Nutmeg Syndicate is focused on setting ambitious goals and achieving greatness. We are determined to participate in tournaments, compete at the highest levels, and earn recognition in the eFootball scene. Every match is an opportunity to learn, improve, and push the boundaries of what's possible.
+        
+        As Nutmeg Syndicate embarks on this exciting journey, we invite players and supporters to join us in our quest for success. Together, we will navigate the challenges of the competitive landscape, celebrate victories, and learn from setbacks. Nutmeg Syndicate is more than a club—it's a movement fueled by passion, ambition, and the pursuit of excellence.
+        
+        Join Nutmeg Syndicate and be part of a new era in eFootball, where every match is a step toward greatness and every player has the opportunity to shine. Let's make history together!</p>
+    </section>
+
+    <section id="team">
+      <h2>Meet the Players</h2>
+      <div class="players">
+        <div class="player-card captain" data-role="Captain" data-stats="">
+          <img src="captain.jpg" alt="Saleh Ahmed Kha" loading="lazy">
+          <h3>Saleh Ahmed Kha</h3>
+        </div>
+        <div class="player-card vice-captain" data-role="Vice-Captain" data-stats="">
+          <img src="vicecaptain.jpg" alt="Samin Intisar" loading="lazy">
+          <h3>Samin Intisar</h3>
+        </div>
+        <div class="player-card advisor" data-role="Advisor" data-stats=""><img src="advisor1.jpg" alt="Muhammad Rakib Uddin" loading="lazy"><h3>Muhammad Rakib Uddin</h3></div>
+        <div class="player-card advisor" data-role="Advisor" data-stats=""><img src="advisor2.jpg" alt="Imran Hosen" loading="lazy"><h3>Imran Hosen</h3></div>
+        <div class="player-card advisor" data-role="Advisor" data-stats=""><img src="advisor3.jpg" alt="Mehedi Foysal" loading="lazy"><h3>Mehedi Foysal</h3></div>
+        <div class="player-card" data-stats=""><img src="player1.jpg" alt="Junayed Sunvee" loading="lazy"><h3>Junayed Sunvee</h3></div>
+        <div class="player-card" data-stats=""><img src="player2.jpg" alt="Orko Sanjan" loading="lazy"><h3>Orko Sanjan</h3></div>
+        <div class="player-card" data-stats=""><img src="player3.jpg" alt="Alamin Hossain Anik" loading="lazy"><h3>Alamin Hossain Anik</h3></div>
+        <div class="player-card" data-stats=""><img src="player4.jpg" alt="Salman Farsi" loading="lazy"><h3>Salman Farsi</h3></div>
+        <div class="player-card" data-stats=""><img src="player5.jpg" alt="Mehedi Hasan Jeechan" loading="lazy"><h3>Mehedi Hasan Jeechan</h3></div>
+        <div class="player-card" data-stats=""><img src="player6.jpg" alt="Hridoy Hasan" loading="lazy"><h3>Hridoy Hasan</h3></div>
+        <div class="player-card" data-stats=""><img src="player7.jpg" alt="Musa Shakil" loading="lazy"><h3>Musa Shakil</h3></div>
+        <div class="player-card" data-stats=""><img src="player8.jpg" alt="Jarif Mehtab" loading="lazy"><h3>Jarif Mehtab</h3></div>
+        <div class="player-card" data-stats=""><img src="player9.jpg" alt="Akanto Datta" loading="lazy"><h3>Akanto Datta</h3></div>
+        <div class="player-card" data-stats=""><img src="player10.jpg" alt="Abyaz Mansur" loading="lazy"><h3>Abyaz Mansur</h3></div>
+        <div class="player-card" data-stats=""><img src="player11.jpg" alt="Shahid" loading="lazy"><h3>Shahid</h3></div>
+        <div class="player-card" data-stats=""><img src="player12.jpg" alt="Shakawat Alam Efty" loading="lazy"><h3>Shakawat Alam Efty</h3></div>
+        <div class="player-card" data-stats=""><img src="player13.jpg" alt="Hridoy Ahamed" loading="lazy"><h3>Hridoy Ahamed</h3></div>
+        <div class="player-card" data-stats=""><img src="player14.jpg" alt="Ahad Sarker" loading="lazy"><h3>Ahad Sarker</h3></div>
+        <div class="player-card" data-stats=""><img src="player15.jpg" alt="AY AN Rahim" loading="lazy"><h3>Ayan Rahim</h3></div>
+        <div class="player-card" data-stats=""><img src="player16.jpg" alt="Minhaz Sarker Joy" loading="lazy"><h3>Minhaz Sarker Joy</h3></div>
+        <div class="player-card" data-stats=""><img src="player17.jpg" alt="Tanim Finnegan" loading="lazy"><h3>Tanim Finnegan</h3></div>
+        <div class="player-card" data-stats=""><img src="player18.jpg" alt="Sarwar Alam" loading="lazy"><h3>Sarwar Alam</h3></div>
+      </div>
+    </section>
+
+    <div id="playerModal" role="dialog" aria-labelledby="player-name" aria-modal="true">
+      <div class="modal-content">
+        <img id="player-image" src="" alt="Player Image" loading="lazy">
+        <h3 id="player-name"></h3>
+        <p id="player-stats"></p>
+        <button onclick="closeModal()" aria-label="Close modal">Close</button>
+      </div>
+    </div>
+
+    <section id="schedule" class="schedule">
+      <h2>Match Schedule</h2>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Opponent</th><th>Community</th><th>Time</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>TBA</td><td>TBA</td><td>TBA</td><td>00:00</td></tr>
+          <tr><td>TBA</td><td>TBA</td><td>TBA</td><td>00:00</td></tr>
+          <tr><td>TBA</td><td>TBA</td><td>TBA</td><td>00:00</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="stats">
+      <h2>Team Stats</h2>
+      <div class="stats-counter">
+        <div><span id="goals">0</span> Points</div>
+        <div><span id="matches">0</span> Matches</div>
+        <div><span id="wins">0</span> Wins</div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <h2>Gallery</h2>
+      <div class="gallery">
+        <img src="neymar.jpeg" alt="Team celebrating a goal" loading="lazy">
+        <img src="l4.jpg" alt="Players training on the field" loading="lazy">
+        <img src="l5.jpg" alt="Fans cheering in the stands" loading="lazy">
+      </div>
+    </section>
+
+
+
+    <section id="blog">
+      <h2>Latest News</h2>
+      <div class="blog-posts">
+        <div class="blog-posts-wrapper">
+          <article>
+            <h3>Nutmeg Syndicate Wins Big!</h3>
+            <p>Nutmeg Syndicate wins their first unofficial match against Glitch United</p>
+          </article>
+          <article>
+            <h3>SIGNS up for Cobeg</h3>
+            <p>Our club has started the journey with Cobeg Community</p>
+          </article>
+          <article>
+            <h3>Player Man of the Match</h3>
+            <p>Muhammad Rakib Uddin secures Man of the Match Against Glitch United </p>
+          </article>
+          <article>
+            <h3>New Logo Launch Event</h3>
+            <p>We unveiled our club logo</p>
+          </article>
+          <article>
+            <h3>Website Launch</h3>
+            <p>First ever club to launch their own website</p>
+          </article>
+          <article>
+            <h3>Community Outreach Program</h3>
+            <p>Nutmeg Syndicate is looking to participate in community ased tournaments</p>
+          </article>
+          <article>
+            <h3>Nutmeg Syndicate Wins Big!</h3>
+            <p>Our team dominated the weekend match with style and flair.</p>
+          </article>
+          <article>
+            <h3>Upcoming Friendly Matches</h3>
+            <p>Join us for upcoming friendly matches and community events this summer season.</p>
+          </article>
+          <article>
+            <h3>Player Spotlight: Imran Hosen</h3>
+            <p>The star player has just joined our club</p>
+          </article>
+          <article>
+            <h3>New player sign ups</h3>
+            <p>A number of players have joined our club</p>
+          </article>
+          <article>
+            <h3>Looking for new players</h3>
+            <p>We urge players to join trial group and join our club</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <h2>Contact Us</h2>
+      <p>Reach out to us on social media!</p>
+      <div class="contact-links">
+        <a href="https://www.facebook.com/profile.php?id=61576719028023" target="_blank" aria-label="Facebook Page">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook Icon" loading="lazy">
+        </a>
+        <a href="https://www.facebook.com/messages/t/692534993935125" target="_blank" aria-label="Messenger">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg" alt="Messenger Icon" loading="lazy">
+        </a>
+      </div>
+    </section>
+
+    <section id="quiz-game">
+      <h2>Football Quiz Challenge</h2>
+      <div id="football" title="Click to start the quiz!" role="button" tabindex="0">⚽</div>
+      <div id="question"></div>
+      <div id="options"></div>
+      <button id="submitBtn">Submit Answer</button>
+      <div id="result"></div>
+      <button id="nextBtn" style="display:none;">Next Question</button>
+    </section>
+
+    <footer>
+      <p>© 2025 Nutmeg Syndicate FC. All rights reserved.</p>
+    </footer>
+  </div>
+  <script defer>
+    // Loading Screen
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.getElementById('main-content');
+        loadingScreen.style.display = 'none';
+        mainContent.style.display = 'block';
+      }, 1000); // 5 seconds
+    });
+
+    // Theme Toggle
+    const toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      toggle.textContent = document.body.classList.contains('light-mode') ? '🌞' : '🌙';
+      localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+    });
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+      toggle.textContent = '🌞';
+    }
+
+    // Hamburger Menu
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    hamburger.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active'));
+    });
+
+    // Slideshow Animation
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function nextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+
+    setInterval(nextSlide, 3000);
+
+    // Image Error Handling for Slideshow
+    document.querySelectorAll('.slide-image').forEach(img => {
+      img.addEventListener('error', () => {
+        img.src = 'fallback.jpg';
+        img.alt = 'Fallback Image';
+      });
+    });
+
+    // Player Modal
+    document.querySelectorAll('.player-card').forEach(card => {
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('click', openModal);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(e);
+        }
+      });
+
+      function openModal(e) {
+        const name = card.querySelector('h3').textContent.split('<br>')[0];
+        const stats = card.dataset.stats || 'No stats available';
+        const image = card.querySelector('img').src;
+        document.getElementById('player-name').textContent = name;
+        document.getElementById('player-stats').textContent = stats;
+        document.getElementById('player-image').src = image;
+        document.getElementById('player-image').alt = `Image of ${name}`;
+        document.getElementById('playerModal').style.display = 'flex';
+        document.querySelector('#playerModal button').focus();
+      }
+    });
+
+    function closeModal() {
+      const modal = document.getElementById('playerModal');
+      if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('playerModal').style.display === 'flex') {
+        closeModal();
+      }
+    });
+
+    // Stats Counter Animation
+    function animateCounter(id, end, duration) {
+      let start = 0;
+      const stepTime = Math.abs(Math.floor(duration / end));
+      const element = document.getElementById(id);
+      const timer = setInterval(() => {
+        start++;
+        element.textContent = start;
+        if (start >= end) clearInterval(timer);
+      }, stepTime);
+    }
+    animateCounter('goals', 23, 3000);
+    animateCounter('matches', 1, 3000);
+    animateCounter('wins', 1, 3000);
+
+    // Highlights Video Toggle
+    document.querySelectorAll('.toggle-video').forEach(button => {
+      let isToggling = false;
+      button.addEventListener('click', () => {
+        if (isToggling) return;
+        isToggling = true;
+        setTimeout(() => { isToggling = false; }, 500);
+
+        const highlight = button.parentElement;
+        const img = highlight.querySelector('.highlight-img');
+        const video = highlight.querySelector('.highlight-video');
+        const error = highlight.querySelector('.video-error');
+
+        if (video.style.display === 'none') {
+          video.src = video.dataset.src + '&rel=0&modestbranding=1&controls=1';
+          video.style.display = 'block';
+          img.style.display = 'none';
+          error.style.display = 'none';
+          button.textContent = 'Show Image';
+        } else {
+          video.src = '';
+          video.style.display = 'none';
+          img.style.display = 'block';
+          error.style.display = 'none';
+          button.textContent = 'Watch Video';
+        }
+      });
+
+      const video = button.parentElement.querySelector('.highlight-video');
+      video.addEventListener('error', () => {
+        const error = button.parentElement.querySelector('.video-error');
+        video.style.display = 'none';
+        button.parentElement.querySelector('.highlight-img').style.display = 'block';
+        error.style.display = 'block';
+        button.textContent = 'Watch Video';
+      });
+    });
+
+    // Quiz Game Logic
+    const questions = [
+      { question: "Who won the FIFA World Cup in 2022?", answer: "Argentina", options: ["Argentina", "France", "Brazil", "Germany"] },
+      { question: "Which player has won the most Ballon d'Or awards?", answer: "Lionel Messi", options: ["Lionel Messi", "Cristiano Ronaldo", "Johan Cruyff", "Michel Platini"] },
+      { question: "Which club has won the most UEFA Champions League titles?", answer: "Real Madrid", options: ["Real Madrid", "AC Milan", "Barcelona", "Liverpool"] },
+      { question: "In which year was the first FIFA World Cup held?", answer: "1930", options: ["1930", "1926", "1934", "1922"] },
+      { question: "Which country has won the most FIFA World Cup titles?", answer: "Brazil", options: ["Brazil", "Italy", "Germany", "Argentina"] },
+      { question: "Who is the all-time top scorer for Brazil's national team?", answer: "Pele", options: ["Pele", "Ronaldo", "Neymar", "Romario"] },
+      { question: "Which English club is known as 'The Red Devils'?", answer: "Manchester United", options: ["Manchester United", "Arsenal", "Chelsea", "Liverpool"] },
+      { question: "What is the nickname of the Spanish national football team?", answer: "La Roja", options: ["La Roja", "Azzurri", "Oranje", "Les Bleus"] },
+      { question: "Which player scored the 'Hand of God' goal in 1986?", answer: "Diego Maradona", options: ["Diego Maradona", "Lionel Messi", "Pele", "Zinedine Zidane"] },
+      { question: "Which stadium is known as 'The Theatre of Dreams'?", answer: "Old Trafford", options: ["Old Trafford", "Anfield", "Camp Nou", "Santiago Bernabeu"] },
+      { question: "Who won the Premier League in the 2022-23 season?", answer: "Manchester City", options: ["Manchester City", "Arsenal", "Liverpool", "Tottenham"] },
+      { question: "Which country hosted the 2014 FIFA World Cup?", answer: "Brazil", options: ["Brazil", "Germany", "South Africa", "Russia"] },
+      { question: "Who is the all-time top scorer in the UEFA Champions League?", answer: "Cristiano Ronaldo", options: ["Cristiano Ronaldo", "Lionel Messi", "Raul", "Robert Lewandowski"] },
+      { question: "Which club did Zinedine Zidane manage to three consecutive Champions League titles?", answer: "Real Madrid", options: ["Real Madrid", "Spain", "Juventus", "Bayern Munich"] },
+      { question: "What is the name of FC Barcelona's home stadium?", answer: "Camp Nou", options: ["Camp Nou", "Santiago Bernabeu", "Wanda Metropolitano", "Parc des Princes"] },
+      { question: "Which Italian club is known as 'The Old Lady'?", answer: "Juventus", options: ["Juventus", "AC Milan", "Inter Milan", "AS Roma"] },
+      { question: "Who won the 2019 Copa América?", answer: "Brazil", options: ["Brazil", "Argentina", "Chile", "Uruguay"] },
+      { question: "Which player is known as 'CR7'?", answer: "Cristiano Ronaldo", options: ["Cristiano Ronaldo", "Lionel Messi", "Neymar Jr", "Kylian Mbappé"] },
+      { question: "Which country won the first UEFA European Championship in 1960?", answer: "Soviet Union", options: ["Soviet Union", "West Germany", "Spain", "Italy"] },
+      { question: "What is the nickname of the German national football team?", answer: "Die Mannschaft", options: ["Die Mannschaft", "Les Bleus", "Azzurri", "France"] },
+      { question: "Which club won the first Premier League title in 1992-93?", answer: "Manchester United", options: ["Manchester United", "Arsenal", "Leeds United", "Blackburn Rovers"] },
+      { question: "Who scored the winning goal in the 2010 World Cup final?", answer: "Andres Iniesta", options: ["Andres Iniesta", "Spain", "Xavi", "Iker Casillas"] },
+      { question: "Which African country has won the most Africa Cup of Nations titles?", answer: "Egypt", options: ["Egypt", "Nigeria", "Ghana", "Cameroon"] },
+      { question: "What is the name of Liverpool's home stadium?", answer: "Anfield", options: ["Anfield", "Old Trafford", "Emirates Stadium", "Stamford Bridge"] },
+      { question: "Which player is known for the 'Panenka' penalty?", answer: "Antonin Panenka", options: ["Antonin Panenka", "Spain", "Andrea Pirlo", "Roberto Baggio"] },
+      { question: "Which country hosted the 2002 FIFA World Cup?", answer: "South Korea and Japan", options: ["South Korea", "South Korea and Japan", "Germany", "Japan", "United States"] },
+      { question: "Who won the Ballon d'Or in 2021?", answer: "Lionel Messi", options: ["Lionel Messi", "Lionel Messi", "Cristiano Ronaldo", "Robert Lewandowski", "Jorginho"] },
+      { question: "Which club is known as 'The Gunners'?", answer: "Arsenal", options: ["Arsenal", "Chelsea", "A", "Manchester City"] },
+      { question: "What is the nickname of the Brazilian national football team?", answer: "Seleção", options: ["Seleção", "Brazil", "La Roja", "Roja", "Azz"] },
+      { question: "Who was the top scorer in the 2018 FIFA World Cup?", answer: "Harry Kane", options: ["Harry Kane", "England", "France", "", "Kylian Mbappé", "Romelu", "Lukaku", "", "Cristiano Ronaldo"] },
+    ];
+
+    const questionDiv = document.getElementById('question');
+    const optionsDiv = document.getElementById('options');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultDiv = document.getElementById('result');
+    const nextBtn = document.getElementById('nextBtn');
+    const football = document.getElementById('football');
+    let currentQuestion;
+
+    function getRandomQuestion() {
+      const index = Math.floor(Math.random() * questions.length);
+      currentQuestion = questions[index];
+      questionDiv.textContent = currentQuestion.question;
+      optionsDiv.innerHTML = '';
+      currentQuestion.options.forEach(option => {
+        const label = document.createElement('label');
+        label.className = 'option-label';
+        label.innerHTML = `<input type="radio" name="answer" value="${option}" aria-label="${option}">${option}`;
+        optionsDiv.appendChild(label);
+      });
+      resultDiv.textContent = '';
+      nextBtn.style.display = 'none';
+      submitBtn.style.display = 'inline-block';
+      submitBtn.disabled = false;
+    }
+
+    function checkAnswer() {
+      const selectedOption = document.querySelector('input[name="answer"]:checked');
+      if (!selectedOption) {
+        resultDiv.textContent = "Please select an answer!";
+        resultDiv.style.color = '#ff4444';
+        return;
+      }
+      const userAnswer = selectedOption.value.toLowerCase();
+      const correctAnswer = currentQuestion.answer.toLowerCase();
+      if (userAnswer === correctAnswer) {
+        resultDiv.textContent = "Correct!";
+        resultDiv.style.color = '#2ea043';
+      } else {
+        resultDiv.textContent = `Wrong! The correct answer is: ${currentQuestion.answer}`;
+        resultDiv.style.color = '#ff4444';
+      }
+      nextBtn.style.display = 'block';
+      submitBtn.disabled = true;
+      document.querySelectorAll('input[name="answer"]').forEach(input => input.disabled = true);
+    }
+
+    submitBtn.addEventListener('click', checkAnswer);
+    nextBtn.addEventListener('click', getRandomQuestion);
+
+    football.addEventListener('click', () => {
+      alert("Test your football knowledge! Select the correct answer below.");
+      document.getElementById('quiz-game').scrollIntoView({ behavior: 'smooth' });
+      football.style.animation = 'none';
+      setTimeout(() => football.style.animation = 'bounce 2s infinite', 2);
+      getRandomQuestion();
+    });
+
+    football.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        football.click();
+      }
+    });
+
+    getRandomQuestion();
+  </script>
+</body>
+</html>
